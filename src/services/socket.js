@@ -14,8 +14,9 @@ export function getSocket(token) {
 
   socket = io(BASE_URL, {
     auth: { token },
-    reconnectionAttempts: 5,
+    reconnectionAttempts: Infinity,
     reconnectionDelay: 2000,
+    reconnectionDelayMax: 10000,
   });
 
   return socket;

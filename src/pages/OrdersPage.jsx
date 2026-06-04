@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
 import { getRestaurantOrders } from "../api/restaurantApi";
 import styles from "./OrdersPage.module.css";
 
 export default function OrdersPage() {
   const { restaurantId } = useAuth();
+  const { reconnectCount } = useSocket();
   const [orders, setOrders] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +16,7 @@ export default function OrdersPage() {
       .then(setOrders)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [restaurantId]);
+  }, [restaurantId, reconnectCount]);
 
   return (
     <div className={`${styles.page} container-fluid px-3 px-sm-4 pt-3`}>

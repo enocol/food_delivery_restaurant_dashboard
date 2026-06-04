@@ -1,15 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { startRingtone } from "../services/notificationSound";
+import { updateOrderStatus } from "../api/restaurantApi";
 import styles from "./NewOrderModal.module.css";
 
 // Common keys that represent the order total
 const TOTAL_KEYS = ["total", "subtotal", "amount", "totalAmount", "orderTotal"];
 
 export default function NewOrderModal({ order, onClose }) {
+  const [submitting, setSubmitting] = useState(false);
+  const [actionError, setActionError] = useState(null);
+
   useEffect(() => {
     const stop = startRingtone();
     return stop;
   }, [order]);
+
+  async function handleAction(status) {
+    const orderId = order.orderId ?? order.id;
+    if (!orderId) return;
+    setSubmitting(true);
+    setActionError(null);
+    try {
+      await updateOrderStatus(orderId, status);
+      onClose();
+    } catch (err) {
+      setActionError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   // Find the first total-like field present in the order
   const totalEntry = TOTAL_KEYS.map((k) => [k, order[k]]).find(([, v]) => v != null);
@@ -68,17 +87,20 @@ export default function NewOrderModal({ order, onClose }) {
           <div className={styles.actionBtns}>
             <button
               className={styles.acceptBtn}
-              onClick={() => { /* TODO: send accept action to backend */ }}
+              onClick={() => handleAction("confirmed")}
+              disabled={submitting}
             >
               ✓ Accept
             </button>
             <button
               className={styles.rejectBtn}
-              onClick={() => { /* TODO: send reject action to backend */ }}
+              onClick={() => handleAction("cancelled")}
+              disabled={submitting}
             >
               ✕ Reject
             </button>
           </div>
+          {actionError && <span className={styles.actionError}>{actionError}</span>}
           {totalEntry && (
             <span className={styles.totalBadge}>
               {totalEntry[0]}: {String(totalEntry[1])}

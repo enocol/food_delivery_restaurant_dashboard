@@ -185,6 +185,22 @@
   color: #fff;
 }
 
+.actionError {
+  color: #fca5a5;
+  font-size: 0.82rem;
+  margin-top: 0.25rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* disabled state for buttons during submission */
+.acceptBtn:disabled,
+.rejectBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .totalBadge {
   background: #000;
   color: #fff;

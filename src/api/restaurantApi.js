@@ -68,6 +68,21 @@ export async function setRestaurantOpen(restaurantId, is_open) {
 }
 
 /**
+ * Updates the status of an order (e.g. confirmed, cancelled).
+ * @param {string} orderId
+ * @param {string} status  e.g. "confirmed" | "cancelled"
+ * @returns {Promise<object>}
+ */
+export async function updateOrderStatus(orderId, status) {
+  const res = await authFetch(`${BASE_URL}/api/orders/${orderId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error("Failed to update order status.");
+  return res.json();
+}
+
+/**
  * Fetches all orders for a restaurant.
  * @param {string} restaurantId
  * @returns {Promise<Array>}
