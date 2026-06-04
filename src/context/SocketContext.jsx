@@ -17,6 +17,7 @@ export function SocketProvider({ children }) {
       setSocket(null);
       setConnected(false);
       setServerReady(false);
+      setOrders([]);
       return;
     }
 

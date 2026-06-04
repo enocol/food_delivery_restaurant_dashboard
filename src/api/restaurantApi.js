@@ -66,3 +66,18 @@ export async function setRestaurantOpen(restaurantId, is_open) {
   const data = await res.json();
   return data;
 }
+
+/**
+ * Fetches all orders for a restaurant.
+ * @param {string} restaurantId
+ * @returns {Promise<Array>}
+ */
+export async function getRestaurantOrders(restaurantId) {
+  const res = await authFetch(
+    `${BASE_URL}/api/orders/restaurant/${restaurantId}`,
+  );
+  if (!res.ok) throw new Error("Failed to fetch orders.");
+  const data = await res.json();
+  console.log("Fetched orders:", data);
+  return data;
+}

@@ -136,14 +136,53 @@
   word-break: break-all;
 }
 
-/* ── Footer / subtotal badge ── */
+/* ── Footer: actions + subtotal badge ── */
 .footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 0.6rem 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.actionBtns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.acceptBtn,
+.rejectBtn {
+  border: none;
+  border-radius: 7px;
+  padding: 0.42rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.acceptBtn:hover,
+.rejectBtn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.acceptBtn:active,
+.rejectBtn:active {
+  transform: translateY(0);
+}
+
+.acceptBtn {
+  background: #16a34a;
+  color: #fff;
+}
+
+.rejectBtn {
+  background: #dc2626;
+  color: #fff;
 }
 
 .totalBadge {

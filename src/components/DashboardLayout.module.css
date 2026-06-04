@@ -1,0 +1,170 @@
+/* ── Page wrapper ── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding-top: 5rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-left: 220px;
+  }
+}
+
+/* ── Fixed top-right header ── */
+.header {
+  z-index: 1030;
+}
+
+.badgeOnline {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+}
+
+.badgeOffline {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+}
+
+.logoutBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.logoutBtn:hover {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  background: #0e1322;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1020;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: transform 0.28s ease;
+}
+
+/* Mobile: hidden off-screen by default */
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 1035;
+  }
+  .sidebarVisible {
+    transform: translateX(0);
+  }
+}
+
+.sidebarBrand {
+  padding: 1.2rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.navList {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0 0.625rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.875rem;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.navLinkActive {
+  background: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+}
+
+.navLinkActive:hover {
+  background: rgba(22, 163, 74, 0.25);
+  color: #4ade80;
+}
+
+/* ── Hamburger button (mobile only) ── */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 1040;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 767px) {
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* ── Mobile backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1034;
+}

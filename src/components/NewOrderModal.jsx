@@ -63,14 +63,28 @@ export default function NewOrderModal({ order, onClose }) {
           </table>
         </div>
 
-        {/* Subtotal badge — bottom-right corner */}
-        {totalEntry && (
-          <div className={styles.footer}>
+        {/* Footer: Accept / Reject actions + optional subtotal badge */}
+        <div className={styles.footer}>
+          <div className={styles.actionBtns}>
+            <button
+              className={styles.acceptBtn}
+              onClick={() => { /* TODO: send accept action to backend */ }}
+            >
+              ✓ Accept
+            </button>
+            <button
+              className={styles.rejectBtn}
+              onClick={() => { /* TODO: send reject action to backend */ }}
+            >
+              ✕ Reject
+            </button>
+          </div>
+          {totalEntry && (
             <span className={styles.totalBadge}>
               {totalEntry[0]}: {String(totalEntry[1])}
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
       </div>
     </div>
