@@ -9,7 +9,7 @@ const STATUS_KEY = "restaurant_status";
 
 export default function LandingPage() {
   const { restaurantName, restaurantId } = useAuth();
-  const { orders } = useSocket();
+  const { orders, socket } = useSocket();
 
   const [restaurant, setRestaurant] = useState(() => {
     try {
@@ -34,6 +34,17 @@ export default function LandingPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Sync socket connection to the restaurant's open/closed state.
+  // On initial load this disconnects the socket if the restaurant is currently closed.
+  useEffect(() => {
+    if (!restaurant || !socket) return;
+    if (restaurant.isOpen) {
+      socket.connect();
+    } else {
+      socket.disconnect();
+    }
+  }, [restaurant, socket]);
+
   async function handleToggle() {
     if (!restaurant) return;
     setUpdating(true);
@@ -42,6 +53,11 @@ export default function LandingPage() {
       const updated = await setRestaurantOpen(restaurantId, !restaurant.isOpen);
       setRestaurant(updated);
       localStorage.setItem(STATUS_KEY, JSON.stringify(updated));
+      if (updated.isOpen) {
+        socket?.connect();
+      } else {
+        socket?.disconnect();
+      }
     } catch {
       setError("Failed to update status. Please try again.");
     } finally {
@@ -83,7 +99,7 @@ export default function LandingPage() {
       </div>
 
       {/* Orders feed */}
-      {orders.length > 0 && (
+      {/* {orders.length > 0 && (
         <div id="orders" className="row justify-content-center mt-3 mt-md-4">
           <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div className={styles.eventFeed}>
@@ -101,7 +117,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

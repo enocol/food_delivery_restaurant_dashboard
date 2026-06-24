@@ -6,7 +6,7 @@ import styles from "./NewOrderModal.module.css";
 // Common keys that represent the order total
 const TOTAL_KEYS = ["total", "subtotal", "amount", "totalAmount", "orderTotal"];
 
-export default function NewOrderModal({ order, onClose }) {
+export default function NewOrderModal({ order, pending = 0, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState(null);
 
@@ -45,6 +45,9 @@ export default function NewOrderModal({ order, onClose }) {
         <div className={styles.header}>
           <span className={styles.headerIcon}>🔔</span>
           <h2 className={styles.headerTitle}>New Order!</h2>
+          {pending > 0 && (
+            <span className={styles.queueBadge}>{pending} more pending</span>
+          )}
           <button className={styles.closeBtn} onClick={onClose} aria-label="Dismiss">✕</button>
         </div>
 

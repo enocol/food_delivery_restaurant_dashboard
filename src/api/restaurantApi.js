@@ -15,6 +15,7 @@ function authFetch(url, options = {}) {
       ...options.headers,
     },
   });
+  console.log(token);
 }
 
 /**
@@ -80,6 +81,18 @@ export async function updateOrderStatus(orderId, status) {
   });
   if (!res.ok) throw new Error("Failed to update order status.");
   return res.json();
+}
+
+/**
+ * Deletes an order.
+ * @param {string} orderId
+ * @returns {Promise<void>}
+ */
+export async function deleteOrder(orderId) {
+  const res = await authFetch(`${BASE_URL}/api/orders/${orderId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete order.");
 }
 
 /**

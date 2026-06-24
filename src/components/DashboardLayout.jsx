@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
@@ -12,14 +12,26 @@ export default function DashboardLayout() {
   const { clearToken } = useAuth();
   const { connected, serverReady, orders } = useSocket();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [modalOrder, setModalOrder] = useState(null);
+  const [queue, setQueue] = useState([]);
+  const processedLengthRef = useRef(0);
 
-  const closeModal = useCallback(() => setModalOrder(null), []);
+  // Shift the first item off the queue (called on close / accept / reject)
+  const closeModal = useCallback(() => setQueue((prev) => prev.slice(1)), []);
 
-  // Show modal on every new incoming order
+  // Enqueue newly arrived orders; reset if orders were cleared (e.g. on logout)
   useEffect(() => {
-    if (orders.length === 0) return;
-    setModalOrder(orders[0]);
+    if (orders.length < processedLengthRef.current) {
+      // orders array was reset
+      processedLengthRef.current = 0;
+      setQueue([]);
+      return;
+    }
+    const newCount = orders.length - processedLengthRef.current;
+    if (newCount === 0) return;
+    // orders are prepended newest-first; reverse so we queue oldest-first
+    const incoming = orders.slice(0, newCount).reverse();
+    setQueue((prev) => [...prev, ...incoming]);
+    processedLengthRef.current = orders.length;
   }, [orders.length]);
 
   function handleLogout() {
@@ -30,7 +42,9 @@ export default function DashboardLayout() {
 
   return (
     <>
-      {modalOrder && <NewOrderModal order={modalOrder} onClose={closeModal} />}
+      {queue.length > 0 && (
+        <NewOrderModal order={queue[0]} pending={queue.length - 1} onClose={closeModal} />
+      )}
 
       {/* Mobile backdrop — closes sidebar on outside click */}
       {sidebarOpen && (

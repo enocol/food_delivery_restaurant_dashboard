@@ -1,7 +1,7 @@
 .page {
   align-self: flex-start;
   width: 100%;
-  height: 100vh;
+  height: auto;
 }
 
 .header {
@@ -137,4 +137,83 @@
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* ── Actions column ── */
+.actionsCell {
+  white-space: nowrap;
+}
+
+.actionBtns {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btnConfirm,
+.btnReject,
+.btnReady,
+.btnDelete {
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btnConfirm,
+.btnReject,
+.btnReady,
+.btnDelete {
+  opacity: 1;
+}
+
+.btnConfirm:disabled,
+.btnReject:disabled,
+.btnReady:disabled,
+.btnDelete:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnConfirm {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btnConfirm:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.btnReject {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btnReject:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.btnReady {
+  background: #0891b2;
+  color: #fff;
+}
+
+.btnReady:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.btnDelete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btnDelete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.28);
+}
+
+.noAction {
+  color: rgba(255, 255, 255, 0.25);
 }

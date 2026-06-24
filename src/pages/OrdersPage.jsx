@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
-import { getRestaurantOrders } from "../api/restaurantApi";
+import { getRestaurantOrders, updateOrderStatus, deleteOrder } from "../api/restaurantApi";
 import styles from "./OrdersPage.module.css";
 
 export default function OrdersPage() {
@@ -10,6 +10,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actioning, setActioning] = useState({});
 
   useEffect(() => {
     getRestaurantOrders(restaurantId)
@@ -17,6 +18,32 @@ export default function OrdersPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [restaurantId, reconnectCount]);
+
+  async function handleStatusChange(orderId, status) {
+    setActioning((prev) => ({ ...prev, [orderId]: true }));
+    try {
+      await updateOrderStatus(orderId, status);
+      const fresh = await getRestaurantOrders(restaurantId);
+      setOrders(fresh);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActioning((prev) => ({ ...prev, [orderId]: false }));
+    }
+  }
+
+  async function handleDelete(orderId) {
+    setActioning((prev) => ({ ...prev, [orderId]: true }));
+    try {
+      await deleteOrder(orderId);
+      const fresh = await getRestaurantOrders(restaurantId);
+      setOrders(fresh);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActioning((prev) => ({ ...prev, [orderId]: false }));
+    }
+  }
 
   return (
     <div className={`${styles.page} container-fluid px-3 px-sm-4 pt-3`}>
@@ -45,6 +72,7 @@ export default function OrdersPage() {
                 <th>Total</th>
                 <th>Status</th>
                 <th>Time</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +107,56 @@ export default function OrdersPage() {
                     {order.createdAt
                       ? new Date(order.createdAt).toLocaleString()
                       : "—"}
+                  </td>
+                  <td className={styles.actionsCell}>
+                    {(() => {
+                      const id = order.orderId ?? order.id;
+                      const busy = !!actioning[id];
+                      const status = (order.status ?? "pending").toLowerCase();
+                      if (status === "pending") {
+                        return (
+                          <div className={styles.actionBtns}>
+                            <button
+                              className={styles.btnConfirm}
+                              disabled={busy}
+                              onClick={() => handleStatusChange(id, "confirmed")}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              className={styles.btnReject}
+                              disabled={busy}
+                              onClick={() => handleStatusChange(id, "cancelled")}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        );
+                      }
+                      if (status === "confirmed") {
+                        return (
+                          <button
+                            className={styles.btnReady}
+                            disabled={busy}
+                            onClick={() => handleStatusChange(id, "ready_for_pickup")}
+                          >
+                            Mark Ready
+                          </button>
+                        );
+                      }
+                      if (status === "cancelled") {
+                        return (
+                          <button
+                            className={styles.btnDelete}
+                            disabled={busy}
+                            onClick={() => handleDelete(id)}
+                          >
+                            Delete
+                          </button>
+                        );
+                      }
+                      return <span className={styles.noAction}>—</span>;
+                    })()}
                   </td>
                 </tr>
               ))}
