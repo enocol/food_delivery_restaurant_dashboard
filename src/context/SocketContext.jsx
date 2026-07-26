@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { getSocket, disconnectSocket } from "../services/socket";
 import { useAuth } from "./AuthContext";
 
@@ -11,6 +11,11 @@ export function SocketProvider({ children }) {
   const [serverReady, setServerReady] = useState(false);
   const [orders, setOrders] = useState([]);
   const [reconnectCount, setReconnectCount] = useState(0);
+  const [ordersVersion, setOrdersVersion] = useState(0);
+
+  const notifyOrdersChanged = useCallback(() => {
+    setOrdersVersion((n) => n + 1);
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -48,6 +53,7 @@ export function SocketProvider({ children }) {
         { ...order, _receivedAt: new Date().toLocaleTimeString() },
         ...prev,
       ]);
+      notifyOrdersChanged();
     });
 
     // Signal consumers to refetch REST data after a reconnect
@@ -64,7 +70,7 @@ export function SocketProvider({ children }) {
       s.off("new_order");
       s.off("reconnect");
     };
-  }, [token]);
+  }, [token, notifyOrdersChanged]);
 
   // Reconnect when the tab becomes visible again after sleep / background
   useEffect(() => {
@@ -82,7 +88,17 @@ export function SocketProvider({ children }) {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ socket, connected, serverReady, orders, reconnectCount }}>
+    <SocketContext.Provider
+      value={{
+        socket,
+        connected,
+        serverReady,
+        orders,
+        reconnectCount,
+        ordersVersion,
+        notifyOrdersChanged,
+      }}
+    >
       {children}
     </SocketContext.Provider>
   );

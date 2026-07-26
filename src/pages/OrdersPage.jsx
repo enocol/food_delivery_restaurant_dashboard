@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { getRestaurantOrders, updateOrderStatus, deleteOrder } from "../api/restaurantApi";
@@ -6,18 +6,24 @@ import styles from "./OrdersPage.module.css";
 
 export default function OrdersPage() {
   const { restaurantId } = useAuth();
-  const { reconnectCount } = useSocket();
+  const { reconnectCount, ordersVersion } = useSocket();
   const [orders, setOrders] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actioning, setActioning] = useState({});
 
+  const fetchOrders = useCallback(async () => {
+    setError(null);
+    const fresh = await getRestaurantOrders(restaurantId);
+    setOrders(fresh);
+  }, [restaurantId]);
+
   useEffect(() => {
-    getRestaurantOrders(restaurantId)
-      .then(setOrders)
+    setLoading(true);
+    fetchOrders()
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [restaurantId, reconnectCount]);
+  }, [fetchOrders, reconnectCount, ordersVersion]);
 
   async function handleStatusChange(orderId, status) {
     setActioning((prev) => ({ ...prev, [orderId]: true }));

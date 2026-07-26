@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { startRingtone } from "../services/notificationSound";
 import { updateOrderStatus } from "../api/restaurantApi";
+import { useSocket } from "../context/SocketContext";
 import styles from "./NewOrderModal.module.css";
 
 // Common keys that represent the order total
 const TOTAL_KEYS = ["total", "subtotal", "amount", "totalAmount", "orderTotal"];
 
 export default function NewOrderModal({ order, pending = 0, onClose }) {
+  const { notifyOrdersChanged } = useSocket();
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState(null);
 
@@ -22,6 +24,7 @@ export default function NewOrderModal({ order, pending = 0, onClose }) {
     setActionError(null);
     try {
       await updateOrderStatus(orderId, status);
+      notifyOrdersChanged();
       onClose();
     } catch (err) {
       setActionError(err.message);
